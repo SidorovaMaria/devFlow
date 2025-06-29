@@ -1,8 +1,62 @@
+import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 
-const Home = async () => {
+const questions = [
+	{
+		_id: "1",
+		title: "How to learn React?",
+		description: "I want to learn React, can anyone help me?",
+		tags: [
+			{ _id: "1", name: "React" },
+			{ _id: "2", name: "JavaScript" },
+		],
+		author: { _id: "1", name: "John Doe" },
+		upvotes: 10,
+		answers: 5,
+		views: 100,
+		createdAt: new Date(),
+	},
+	{
+		_id: "2",
+		title: "What is the best way to learn JavaScript?",
+		description: "I am new to JavaScript, what resources do you recommend?",
+		tags: [
+			{ _id: "3", name: "JavaScript" },
+			{ _id: "4", name: "Web Development" },
+		],
+		author: { _id: "2", name: "Jane Smith" },
+		upvotes: 20,
+		answers: 10,
+		views: 200,
+		createdAt: new Date(),
+	},
+	{
+		_id: "3",
+		title: "How to use Next.js?",
+		description: "I want to build a website using Next.js, any tips?",
+		tags: [
+			{ _id: "5", name: "Next.js" },
+			{ _id: "6", name: "React" },
+		],
+		author: { _id: "3", name: "Alice Johnson" },
+		upvotes: 15,
+		answers: 8,
+		views: 150,
+		createdAt: new Date(),
+	},
+];
+interface SearchParams {
+	searchParams: Promise<{ [key: string]: string }>;
+}
+
+const Home = async ({ searchParams }: SearchParams) => {
+	console.log("Search Params:", await searchParams);
+	const { query = "" } = await searchParams;
+	const filteredQuestions = questions.filter((question) =>
+		question.title.toLowerCase().includes(query?.toLowerCase())
+	);
 	return (
 		<>
 			<section className="w-full flex flex-col-reverse justify-between gap-4 sm:flex-row  sm:items-center">
@@ -11,13 +65,19 @@ const Home = async () => {
 					<Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
 				</Button>
 			</section>
-			<section className="mt-11">Local Seacrh</section>
+			<section className="mt-11">
+				<LocalSearch
+					route="/"
+					imgSrc="/icons/search.svg"
+					placeholder="Search questions..."
+					otherClasses="flex-1"
+				/>
+			</section>
 			HomeFilter
 			<div className="mt-11  flex w-full flex-col gap-6">
-				<p>Questuion Card 1</p>
-				<p>Questuion Card 1</p>
-				<p>Questuion Card 1</p>
-				<p>Questuion Card 1</p>
+				{filteredQuestions.map((question) => (
+					<h1 key={question._id}>{question.title}</h1>
+				))}
 			</div>
 		</>
 	);
