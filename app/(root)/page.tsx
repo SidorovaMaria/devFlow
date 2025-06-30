@@ -3,6 +3,7 @@ import HomeFilter from "@/components/filter/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+
 import Link from "next/link";
 
 const questions = [
@@ -61,6 +62,7 @@ const questions = [
 		createdAt: new Date("2025-06-12"),
 	},
 ];
+
 interface SearchParams {
 	searchParams: Promise<{ [key: string]: string }>;
 }
