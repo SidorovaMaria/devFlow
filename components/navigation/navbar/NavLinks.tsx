@@ -40,7 +40,7 @@ const NavLinks = ({ isMobileNav = false }: { isMobileNav?: boolean }) => {
 							alt={item.label}
 							width={20}
 							height={20}
-							className={cn({ "invert-colors": !isActive })}
+							className={cn({ "invert-colors w-5 h-5": !isActive })}
 						/>
 						<p
 							className={cn(
