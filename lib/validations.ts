@@ -78,3 +78,14 @@ export const FIELD_TYPES = {
 	email: "email",
 	password: "password",
 };
+//Front End Validation for the users
+export const UserSchema = z.object({
+	name: z.string().min(1, { message: "Name is required." }),
+	username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
+	email: z.string().email({ message: "Please provide a valid email address." }),
+	bio: z.string().optional(),
+	image: z.string().url({ message: "Please provide a valid URL." }).optional(),
+	location: z.string().optional(),
+	portfolio: z.string().url({ message: "Please provide a valid URL." }).optional(),
+	reputation: z.number().optional(),
+});
