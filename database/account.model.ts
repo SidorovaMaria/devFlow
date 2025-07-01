@@ -1,6 +1,6 @@
 import { Document, model, models, Schema, Types } from "mongoose";
 
-interface IAccount {
+export interface IAccount {
 	userId: Types.ObjectId;
 	name: string;
 	image?: string;
