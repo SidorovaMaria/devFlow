@@ -196,6 +196,10 @@ export async function getQuestions(
 			filterQuery.answers = 0;
 			sortCriteria = { createdAt: -1 };
 			break;
+		case "answered":
+			filterQuery.answers = { $gt: 0 };
+			sortCriteria = { createdAt: -1 };
+			break;
 		case "popular":
 			sortCriteria = { upvotes: -1 };
 			break;

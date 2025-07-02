@@ -16,6 +16,7 @@ const filters = [
 		name: "Popular",
 		value: "popular",
 	},
+	{ name: "Answered", value: "answered" },
 	{
 		name: "Unanswered",
 		value: "unanswered",
