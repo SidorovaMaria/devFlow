@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import React, { useRef } from "react";
+import React, { useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,13 +21,20 @@ import {
 import { Input } from "../ui/input";
 
 import TagCard from "../cards/TagCard";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/constants/routes";
+import { createQuestion } from "@/lib/actions/question.action";
+import { RefreshCcw } from "lucide-react";
 
 const Editor = dynamic(() => import("@/components/editor"), {
 	ssr: false,
 });
 
 const QuestionForm = () => {
+	const router = useRouter();
 	const editorRef = useRef<MDXEditorMethods>(null);
+	const [isPending, startTransition] = useTransition();
 
 	const form = useForm<z.infer<typeof askQuestionSchema>>({
 		resolver: zodResolver(askQuestionSchema),
@@ -74,8 +81,18 @@ const QuestionForm = () => {
 		}
 	};
 
-	const handleCreateQuestion = (data: z.infer<typeof askQuestionSchema>) => {
-		console.log(data);
+	const handleCreateQuestion = async (data: z.infer<typeof askQuestionSchema>) => {
+		startTransition(async () => {
+			const result = await createQuestion(data);
+			if (result.success) {
+				toast.success("Question created successfully!");
+				if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+			} else {
+				toast.error(`Error: ${result.status}`, {
+					description: result.error?.message || "Something went wrong!",
+				});
+			}
+		});
 	};
 
 	return (
@@ -172,8 +189,19 @@ const QuestionForm = () => {
 				/>
 
 				<div className="mt-16 flex justify-end">
-					<Button type="submit" className="primary-gradient w-fit !text-light-900">
-						Ask A Question
+					<Button
+						type="submit"
+						disabled={isPending}
+						className="primary-gradient w-fit !text-light-900"
+					>
+						{isPending ? (
+							<>
+								<RefreshCcw className="mr-2 size-4 animate-spin" />
+								<span className="hidden md:inline">Submitting...</span>
+							</>
+						) : (
+							<>Ask A Question</>
+						)}
 					</Button>
 				</div>
 			</form>
