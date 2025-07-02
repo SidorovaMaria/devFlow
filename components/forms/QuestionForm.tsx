@@ -51,9 +51,11 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 		e: React.KeyboardEvent<HTMLInputElement>,
 		field: { value: string[] }
 	) => {
+		console.log(field, e);
 		if (e.key === "Enter") {
 			e.preventDefault();
 			const tagInput = e.currentTarget.value.trim().toLowerCase();
+
 			if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
 				form.setValue("tags", [...field.value, tagInput]);
 				e.currentTarget.value = "";
@@ -87,7 +89,10 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 	const handleCreateQuestion = async (data: z.infer<typeof askQuestionSchema>) => {
 		startTransition(async () => {
 			if (isEdit && question) {
-				const result = await editQuestion({ questionId: question._id, ...data });
+				const result = await editQuestion({
+					questionId: question?._id,
+					...data,
+				});
 				if (result.success) {
 					toast.success("Question updated successfully!");
 					if (result.data) router.push(ROUTES.QUESTIONS(result.data.id));
