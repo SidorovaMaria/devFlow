@@ -65,6 +65,13 @@ export const askQuestionSchema = z.object({
 		.min(1, { message: "At least one tag is required." })
 		.max(3, { message: "Cannot add more than 3 tags." }),
 });
+export const editQuestionSchema = askQuestionSchema.extend({
+	questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
+export const getQuestionSchema = z.object({
+	questionId: z.string().min(1, { message: "Question ID is required." }),
+});
 export const FIELD_NAMES = {
 	username: "Username",
 	name: "Full Name",
