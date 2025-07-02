@@ -53,7 +53,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 	) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
-			const tagInput = e.currentTarget.value.trim();
+			const tagInput = e.currentTarget.value.trim().toLowerCase();
 			if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
 				form.setValue("tags", [...field.value, tagInput]);
 				e.currentTarget.value = "";
@@ -90,7 +90,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 				const result = await editQuestion({ questionId: question._id, ...data });
 				if (result.success) {
 					toast.success("Question updated successfully!");
-					if (result.data) router.push(ROUTES.QUESTIONS(result.data._id));
+					if (result.data) router.push(ROUTES.QUESTIONS(result.data.id));
 				} else {
 					toast.error(`Error: ${result.status}`, {
 						description: result.error?.message || "Something went wrong!",
