@@ -6,24 +6,32 @@ import Metric from "@/components/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+
 const QuestionDetails = async ({ params }: RouteParams) => {
 	const { id } = await params;
-	const { success, data: question, error } = await getQuestion({ questionId: id });
-	if (!success || !question || error) {
+	const { success, data: question } = await getQuestion({ questionId: id });
+	after(async () => {
+		await incrementViews({ questionId: id });
+	});
+
+	if (!success || !question) {
 		return redirect("/404");
 	}
+
 	const { author, createdAt, answers, views, tags, content } = question;
 	return (
 		<>
 			<div className="flex-start w-full flex-col">
 				<div className="flex w-full flex-col-reverse justify-between">
-					<div className="flex items-center justify-start gap-1">
+					<div className="flex items-center justify-start gap-3">
 						<UserAvatar
 							id={author._id}
 							name={author.name}
-							className="size-[22px]"
+							imageUrl={author.image}
+							className="size-[36px]"
 							fallbackClassName="text-[10px]"
 						/>
 						<Link href={ROUTES.PROFILE(author._id)}>

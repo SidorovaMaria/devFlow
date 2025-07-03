@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import QuestionForm from "@/components/forms/QuestionForm";
 import ROUTES from "@/constants/routes";
 import { getQuestion } from "@/lib/actions/question.action";
+import { UnauthorizedError } from "@/lib/http-errors";
 import { notFound, redirect } from "next/navigation";
 import React from "react";
 
@@ -13,7 +14,11 @@ const EditQuestion = async ({ params }: RouteParams) => {
 
 	const { data: question, success } = await getQuestion({ questionId: id });
 	if (!success) return notFound();
-	if (question?.author.toString() !== session?.user?.id) redirect(ROUTES.QUESTIONS(id));
+
+	if (question?.author._id.toString() !== session?.user?.id) {
+		throw new UnauthorizedError("You are not authorized to edit this question.");
+		redirect(ROUTES.QUESTIONS(id));
+	}
 
 	return (
 		<main>
