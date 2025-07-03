@@ -1,5 +1,4 @@
 import React from "react";
-import { sampleQuestion } from "@/constants/example";
 import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 import ROUTES from "@/constants/routes";
@@ -7,10 +6,15 @@ import Metric from "@/components/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
+import { getQuestion } from "@/lib/actions/question.action";
+import { redirect } from "next/navigation";
 const QuestionDetails = async ({ params }: RouteParams) => {
 	const { id } = await params;
-	const { author, createdAt, answers, views, tags, content } = sampleQuestion;
-	console.log("Question ID:", id);
+	const { success, data: question, error } = await getQuestion({ questionId: id });
+	if (!success || !question || error) {
+		return redirect("/404");
+	}
+	const { author, createdAt, answers, views, tags, content } = question;
 	return (
 		<>
 			<div className="flex-start w-full flex-col">
@@ -34,7 +38,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 					</div>
 				</div>
 				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">
-					{sampleQuestion.title}
+					{question.title}
 				</h2>
 			</div>
 			<div className="mb-8 mt-5 flex flex-wrap gap-4">
