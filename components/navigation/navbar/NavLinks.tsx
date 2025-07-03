@@ -30,9 +30,9 @@ const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean; user
 						key={item.label}
 						className={cn(
 							isActive
-								? "primary-gradient rounded-lg text-light-900"
-								: "text-dark300_light900",
-							"flex items-center justify-start gap-4 bg-transparent p-4"
+								? "primary-gradient  text-light-900"
+								: "text-dark300_light900 hover:bg-dark-300/25  dark:hover:bg-dark-300! hover:brightness-125",
+							"flex items-center justify-start gap-4 bg-transparent p-4 rounded-lg"
 						)}
 					>
 						<Image
