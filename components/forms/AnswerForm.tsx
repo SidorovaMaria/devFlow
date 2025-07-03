@@ -62,8 +62,13 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
 			return;
 		}
 		setIsAISubmitting(true);
+		const userAnswer = editorRef.current?.getMarkdown();
 		try {
-			const { success, data, error } = await api.ai.getAnswer(questionTitle, questionContent);
+			const { success, data, error } = await api.ai.getAnswer(
+				questionTitle,
+				questionContent,
+				userAnswer
+			);
 			if (!success) {
 				toast.error(`Failed to generate AI answer: ${error?.message || "Unknown error"}`);
 			}

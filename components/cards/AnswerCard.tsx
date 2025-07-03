@@ -4,6 +4,7 @@ import { getTimeStamp } from "@/lib/utils";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import Preview from "../editor/Preview";
+import Votes from "../votes/Votes";
 
 const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
 	return (
@@ -31,7 +32,9 @@ const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
 						</p>
 					</Link>
 				</div>
-				<div className="flex justify-end">Votes</div>
+				<div className="flex justify-end">
+					<Votes /> //TODO
+				</div>
 			</div>
 			<Preview content={content} />
 		</article>
