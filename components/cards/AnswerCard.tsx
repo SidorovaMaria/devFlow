@@ -7,7 +7,7 @@ import Preview from "../editor/Preview";
 
 const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
 	return (
-		<article className="light-border border-b py-10">
+		<article className="light-border border-4 my-5 py-5 px-5 rounded-md  ">
 			<span id={JSON.stringify(_id)} className="hash-span" />
 			<div className="mb-5 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
 				<div className="flex flex-1 items-start gap-1 sm:items-center">
