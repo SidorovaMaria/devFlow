@@ -32,9 +32,7 @@ const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
 						</p>
 					</Link>
 				</div>
-				<div className="flex justify-end">
-					<Votes /> //TODO
-				</div>
+				<div className="flex justify-end">{/* <Votes /> //TODO */}</div>
 			</div>
 			<Preview content={content} />
 		</article>

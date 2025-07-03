@@ -14,15 +14,14 @@ const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean; user
 	return (
 		<>
 			{sidebarLinks.map((item) => {
-				const baseRoute = item.route;
-				const isProfile = baseRoute === "/profile";
-				const finalRoute = isProfile && userId ? `${baseRoute}/${userId}` : baseRoute;
+				if (item.route === "/profile") {
+					if (userId) item.route = `${item.route}/${userId}`;
+					else return null;
+				}
 
 				const isActive =
-					(pathname.includes(baseRoute) && baseRoute.length > 1) ||
-					pathname === baseRoute;
-
-				if (isProfile && !userId) return null;
+					(pathname.includes(item.route) && item.route.length > 1) ||
+					pathname === item.route;
 
 				const LinkComponent = (
 					<Link
@@ -54,11 +53,11 @@ const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean; user
 				);
 
 				return isMobileNav ? (
-					<SheetClose asChild key={finalRoute}>
+					<SheetClose asChild key={item.route}>
 						{LinkComponent}
 					</SheetClose>
 				) : (
-					<React.Fragment key={finalRoute}>{LinkComponent}</React.Fragment>
+					<React.Fragment key={item.route}>{LinkComponent}</React.Fragment>
 				);
 			})}
 		</>

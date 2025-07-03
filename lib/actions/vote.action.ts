@@ -7,6 +7,8 @@ import { CreateVoteSchema, hasVotedSchema, UpdateVoteCountSchema } from "../vali
 import mongoose, { ClientSession } from "mongoose";
 import { Answer, Vote } from "@/database";
 import Question from "@/database/question.model";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function updateVoteCount(
 	params: UpdateVoteCountParams,
@@ -66,13 +68,40 @@ export async function createVote(params: createVoteParams): Promise<ActionRespon
 				await Vote.deleteOne({
 					_id: existingVote._id,
 				}).session(session);
+				await updateVoteCount(
+					{
+						targetId,
+						targetType,
+						voteType,
+						change: -1,
+					},
+					session
+				);
 			} else {
+				// If user is changing their vote, update voteType and adjust counts
 				await Vote.findByIdAndUpdate(
 					existingVote._id,
 					{ voteType },
 					{ new: true, session }
 				);
-				await updateVoteCount({ targetId, targetType, voteType, change: -1 }, session);
+				await updateVoteCount(
+					{
+						targetId,
+						targetType,
+						voteType: existingVote.voteType,
+						change: -1,
+					},
+					session
+				);
+				await updateVoteCount(
+					{
+						targetId,
+						targetType,
+						voteType,
+						change: 1,
+					},
+					session
+				);
 			}
 		} else {
 			await Vote.create(
@@ -88,7 +117,9 @@ export async function createVote(params: createVoteParams): Promise<ActionRespon
 			);
 			await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
 		}
+		revalidatePath(ROUTES.QUESTIONS(targetId));
 		await session.commitTransaction();
+
 		return { success: true };
 	} catch (error) {
 		await session.abortTransaction();

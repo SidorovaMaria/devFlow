@@ -1,23 +1,37 @@
 "use client";
+import { createVote } from "@/lib/actions/vote.action";
 import { formatNumber } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { toast } from "sonner";
 interface Params {
 	upvotes: number;
-	hasUpVoted: boolean;
+	targetType: "question" | "answer";
 	downvotes: number;
-	hasDownVoted: boolean;
+	targetId: string;
+	hasVotedPromise: Promise<ActionResponse<HasVotedResponse>>;
 }
-const Votes = ({ upvotes, hasUpVoted, downvotes, hasDownVoted }: Params) => {
+const Votes = ({ upvotes, downvotes, targetId, targetType, hasVotedPromise }: Params) => {
 	const session = useSession();
 	const userId = session.data?.user?.id;
 	const [isLoading, setisLoading] = useState(false);
+	const { success, data } = use(hasVotedPromise);
+	const { hasUpVoted, hasDownVoted } = data || {};
+
 	const handleVote = async (type: "upvote" | "downvote") => {
 		if (!userId) return toast.error("You need to be logged in to vote.");
 		setisLoading(true);
 		try {
+			const result = await createVote({
+				targetId,
+				targetType,
+				voteType: type,
+			});
+			if (!result.success) {
+				return toast.error(result.error?.message || "An error occurred while voting.");
+			}
+
 			const successMessage =
 				type === "upvote"
 					? `Upvote ${!hasUpVoted ? "added" : "removed"} successfully`
@@ -34,7 +48,7 @@ const Votes = ({ upvotes, hasUpVoted, downvotes, hasDownVoted }: Params) => {
 		<div className="flex-center gap-2.5">
 			<div className="flex-center gap-1.5">
 				<Image
-					src={hasUpVoted ? "/icons/upvoted.svg" : "/icons/upvote.svg"}
+					src={success && hasUpVoted ? "/icons/upvoted.svg" : "/icons/upvote.svg"}
 					width={18}
 					height={18}
 					alt="upvote"
@@ -52,7 +66,7 @@ const Votes = ({ upvotes, hasUpVoted, downvotes, hasDownVoted }: Params) => {
 
 			<div className="flex-center gap-1.5">
 				<Image
-					src={hasDownVoted ? "/icons/downvoted.svg" : "/icons/downvote.svg"}
+					src={success && hasDownVoted ? "/icons/downvoted.svg" : "/icons/downvote.svg"}
 					width={18}
 					height={18}
 					alt="downvote"
