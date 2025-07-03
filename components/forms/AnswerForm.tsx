@@ -1,35 +1,27 @@
 "use client";
-import { z, ZodObject, ZodRawShape } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { AnswerSchema, FIELD_NAMES, FIELD_TYPES } from "@/lib/validations";
-import Link from "next/link";
-import ROUTES from "@/constants/routes";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+
+import { AnswerSchema } from "@/lib/validations";
+
+import { useRef, useState, useTransition } from "react";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
+import { createAnswer } from "@/lib/actions/answer.action";
 
 const Editor = dynamic(() => import("@/components/editor"), {
 	ssr: false,
 });
 
-const AnswerForm = () => {
+const AnswerForm = (questionId: { questionId: string }) => {
 	const editorRef = useRef<MDXEditorMethods>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isAnswering, startAnsweringTransition] = useTransition();
 	const [isAISubmitting, setIsAISubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -40,7 +32,18 @@ const AnswerForm = () => {
 	});
 
 	const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
-		console.log("Form submitted with values:", values);
+		startAnsweringTransition(async () => {
+			const result = await createAnswer({
+				questionId: questionId.questionId,
+				content: values.content,
+			});
+			if (result.success) {
+				form.reset();
+				toast.success("Answer posted successfully!");
+			} else {
+				toast.error(`${result.error?.message} Failed to post answer. Please try again.`);
+			}
+		});
 	};
 
 	return (
@@ -97,7 +100,7 @@ const AnswerForm = () => {
 							type="submit"
 							className="primary-gradient w-fit cursor-pointer hover:brightness-125"
 						>
-							{isSubmitting ? (
+							{isAnswering ? (
 								<>
 									<RefreshCcw className="mr-2 size-4 animate-spin" />
 									Posting...
