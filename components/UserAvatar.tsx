@@ -21,15 +21,15 @@ const UserAvatar = ({ id, name, imageUrl, className = "h-9 w-9", fallbackClassNa
 
 	return (
 		<Link href={ROUTES.PROFILE(id)}>
-			<Avatar className={className}>
+			<Avatar className={cn("realtive", className)}>
 				{imageUrl ? (
 					<Image
 						src={imageUrl}
 						alt={name}
 						className="object-cover"
-						width={36}
-						height={36}
+						fill
 						quality={100}
+						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					/>
 				) : (
 					<AvatarFallback

@@ -55,3 +55,15 @@ interface Answer {
 	upvotes: number;
 	downvotes: number;
 }
+//Data that othrers can see
+interface User {
+	_id: string;
+	username: string;
+	name: string;
+	email: string;
+	bio?: string;
+	image?: string;
+	location?: string;
+	portfolio?: string;
+	reputation?: number;
+}
