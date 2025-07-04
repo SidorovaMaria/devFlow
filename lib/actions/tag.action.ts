@@ -5,6 +5,7 @@ import { GetTagQuestionsSchema, PaginationedSerachParamsSchema } from "../valida
 import { Tag } from "@/database";
 import { NotFoundError } from "../http-errors";
 import Question from "@/database/question.model";
+import dbConnect from "../mongoose";
 
 export const getTags = async (
 	params: PaginatedSearchParams
@@ -99,3 +100,16 @@ export const getTagQuestion = async (
 		return handleError(error) as ErrorResponse;
 	}
 };
+
+export async function getPopularTags(): Promise<ActionResponse<Tag[]>> {
+	try {
+		await dbConnect();
+		const topTags = await Tag.find({}).sort({ questions: -1 }).limit(5);
+		return {
+			success: true,
+			data: JSON.parse(JSON.stringify(topTags)),
+		};
+	} catch (error) {
+		return handleError(error) as ErrorResponse;
+	}
+}

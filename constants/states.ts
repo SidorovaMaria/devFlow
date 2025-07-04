@@ -65,3 +65,11 @@ export const EMPTY_HOT_QUESTIONS = {
 		href: ROUTES.HOME,
 	},
 };
+export const EMPTY_POPULAR_TAGS = {
+	title: "No Popular Tags Yet",
+	message: "Looks like the tag cloud is still gathering its popularity. Check back later!",
+	button: {
+		text: "Explore Tags",
+		href: ROUTES.TAGS,
+	},
+};
