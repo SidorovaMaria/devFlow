@@ -14,6 +14,7 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import AllAnswers from "@/components/answers/AllAnswers";
 import Votes from "@/components/votes/Votes";
 import { hasVoted } from "@/lib/actions/vote.action";
+import { RefreshCcw } from "lucide-react";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
 	const { id } = await params;
@@ -58,7 +59,14 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 					</div>
 
 					<div className="flex justify-end">
-						<Suspense fallback={<div>Loading...</div>}>
+						<Suspense
+							fallback={
+								<div className="text-xs flex items-center justify-center gap-2">
+									<RefreshCcw className="animate-spin size-4" />
+									Loading...
+								</div>
+							}
+						>
 							<Votes
 								upvotes={question.upvotes}
 								downvotes={question.downvotes}

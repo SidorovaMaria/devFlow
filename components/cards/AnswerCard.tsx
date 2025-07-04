@@ -1,12 +1,19 @@
-import React from "react";
+import React, { Suspense } from "react";
 import UserAvatar from "../UserAvatar";
 import { getTimeStamp } from "@/lib/utils";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import Preview from "../editor/Preview";
 import Votes from "../votes/Votes";
+import { hasVoted } from "@/lib/actions/vote.action";
+import { RefreshCcw } from "lucide-react";
 
-const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
+const AnswerCard = ({ _id, author, upvotes, downvotes, content, createdAt }: Answer) => {
+	console.log("AnswerCard rendered", upvotes, downvotes);
+	const hasVotedPromise = hasVoted({
+		targetId: _id,
+		targetType: "answer",
+	});
 	return (
 		<article className="light-border border-4 my-5 py-5 px-5 rounded-md  ">
 			<span id={JSON.stringify(_id)} className="hash-span" />
@@ -32,7 +39,24 @@ const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
 						</p>
 					</Link>
 				</div>
-				<div className="flex justify-end">{/* <Votes /> //TODO */}</div>
+				<div className="flex justify-end">
+					<Suspense
+						fallback={
+							<div className="text-xs flex items-center justify-center gap-2">
+								<RefreshCcw className="animate-spin size-4" />
+								Loading...
+							</div>
+						}
+					>
+						<Votes
+							upvotes={upvotes}
+							downvotes={downvotes}
+							targetType="answer"
+							targetId={_id}
+							hasVotedPromise={hasVotedPromise}
+						/>
+					</Suspense>
+				</div>
 			</div>
 			<Preview content={content} />
 		</article>

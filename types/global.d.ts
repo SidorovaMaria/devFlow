@@ -53,5 +53,5 @@ interface Answer {
 	content: string;
 	createdAt: Date;
 	upvotes: number;
-	downvortes: number;
+	downvotes: number;
 }
