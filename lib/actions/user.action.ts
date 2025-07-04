@@ -3,7 +3,11 @@
 import { FilterQuery } from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { getUserSchema, PaginationedSerachParamsSchema } from "../validations";
+import {
+	GetUserQuestionsSchema,
+	getUserSchema,
+	PaginationedSerachParamsSchema,
+} from "../validations";
 import { Answer, User } from "@/database";
 import { NotFoundError } from "../http-errors";
 import Question from "@/database/question.model";
@@ -85,3 +89,37 @@ export async function getUser(
 		return handleError(error) as ErrorResponse;
 	}
 }
+
+export const getUserQuestions = async (
+	params: GetUserQuestionsParams
+): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> => {
+	const validationResult = await action({
+		params,
+		schema: GetUserQuestionsSchema,
+	});
+	if (validationResult instanceof Error) {
+		return handleError(validationResult) as ErrorResponse;
+	}
+	const { userId, page = 1, pageSize = 10 } = validationResult.params!;
+	const skip = (Number(page) - 1) * pageSize;
+	const limit = pageSize;
+	try {
+		const totalQuestions = await Question.countDocuments({ author: userId });
+		const questions = await Question.find({ author: userId })
+			.sort({ upvotes: -1 })
+			.populate("tags", "name")
+			.populate("author", "name image")
+			.skip(skip)
+			.limit(limit);
+		const isNext = totalQuestions > skip + questions.length;
+		return {
+			success: true,
+			data: {
+				questions: JSON.parse(JSON.stringify(questions)),
+				isNext,
+			},
+		};
+	} catch (error) {
+		return handleError(error as Error) as ErrorResponse;
+	}
+};
