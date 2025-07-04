@@ -73,6 +73,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
 				toast.error(`Failed to generate AI answer: ${error?.message || "Unknown error"}`);
 			}
 			const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
+			console.log("Formatted AI Answer:", formattedAnswer);
 			if (editorRef.current) {
 				editorRef.current.setMarkdown(formattedAnswer);
 				form.setValue("content", formattedAnswer);

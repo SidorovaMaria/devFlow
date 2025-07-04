@@ -72,3 +72,7 @@ export const formatNumber = (num: number) => {
 		return num.toString();
 	}
 };
+export function sanitizeMarkdown(markdown: string): string {
+	// Remove problematic JSON-like code metadata
+	return markdown.replace(/^\s*\{.*"type":"code".*"name":"N\/A".*\}\s*$/gm, "").trim();
+}
