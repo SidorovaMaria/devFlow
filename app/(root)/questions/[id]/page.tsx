@@ -15,6 +15,8 @@ import AllAnswers from "@/components/answers/AllAnswers";
 import Votes from "@/components/votes/Votes";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { RefreshCcw } from "lucide-react";
+import SaveQuestion from "@/components/questions/SaveQuestion";
+import { hasSavedQuestion, toggleSaveQuestion } from "@/lib/actions/collection.action";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
 	const { id } = await params;
@@ -38,7 +40,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 	});
 
 	const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
-	const { author, createdAt, answers, views, tags, content } = question;
+	const hasSavedQuestionPromise = hasSavedQuestion({ questionId: question._id });
+
+	const { author, createdAt, answers, views, title, tags, content } = question;
 	return (
 		<>
 			<div className="flex-start w-full flex-col">
@@ -58,7 +62,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 						</Link>
 					</div>
 
-					<div className="flex justify-end">
+					<div className="flex justify-end gap-3">
 						<Suspense
 							fallback={
 								<div className="text-xs flex items-center justify-center gap-2">
@@ -75,11 +79,15 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 								hasVotedPromise={hasVotedPromise}
 							/>
 						</Suspense>
+						<Suspense>
+							<SaveQuestion
+								questionId={question._id}
+								hasSavedQuestionPromise={hasSavedQuestionPromise}
+							/>
+						</Suspense>
 					</div>
 				</div>
-				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">
-					{question.title}
-				</h2>
+				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">{title}</h2>
 			</div>
 			<div className="mb-8 mt-5 flex flex-wrap gap-4">
 				<Metric
