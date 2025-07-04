@@ -69,7 +69,7 @@ export const EMPTY_POPULAR_TAGS = {
 	title: "No Popular Tags Yet",
 	message: "Looks like the tag cloud is still gathering its popularity. Check back later!",
 	button: {
-		text: "Explore Tags",
+		text: "Create Tag",
 		href: ROUTES.TAGS,
 	},
 };

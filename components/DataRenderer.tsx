@@ -78,7 +78,7 @@ const DataRenderer = <T,>({ success, error, data, empty = DEFAULT_EMPTY, render 
 				message={
 					error?.details ? JSON.stringify(error.details, null, 2) : DEFAULT_ERROR.message
 				}
-				button={DEFAULT_ERROR.button}
+				// button={DEFAULT_ERROR.button}
 			/>
 		);
 	}

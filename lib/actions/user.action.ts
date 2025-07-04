@@ -3,8 +3,10 @@
 import { FilterQuery } from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { PaginationedSerachParamsSchema } from "../validations";
-import { User } from "@/database";
+import { getUserSchema, PaginationedSerachParamsSchema } from "../validations";
+import { Answer, User } from "@/database";
+import { NotFoundError } from "../http-errors";
+import Question from "@/database/question.model";
 
 export async function getUsers(
 	params: PaginatedSearchParams
@@ -51,5 +53,35 @@ export async function getUsers(
 		};
 	} catch (error) {
 		return handleError(error as Error) as ErrorResponse;
+	}
+}
+export async function getUser(
+	params: getUserParams
+): Promise<ActionResponse<{ user: User; totalQuestions: number; totalAnswers: number }>> {
+	const validatetionResult = await action({
+		params,
+		schema: getUserSchema,
+	});
+	if (validatetionResult instanceof Error) {
+		return handleError(validatetionResult) as ErrorResponse;
+	}
+	const { userId } = validatetionResult.params!;
+	try {
+		const user = await User.findById(userId);
+		if (!user) {
+			throw new NotFoundError("User");
+		}
+		const totalQuestions = await Question.countDocuments({ author: userId });
+		const totalAnswers = await Answer.countDocuments({ author: userId });
+		return {
+			success: true,
+			data: {
+				user: JSON.parse(JSON.stringify(user)),
+				totalQuestions,
+				totalAnswers,
+			},
+		};
+	} catch (error) {
+		return handleError(error) as ErrorResponse;
 	}
 }
