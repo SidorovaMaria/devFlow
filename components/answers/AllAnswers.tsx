@@ -3,6 +3,8 @@ import { Action } from "sonner";
 import DataRenderer from "../DataRenderer";
 import { EMPTY_ANSWERS } from "@/constants/states";
 import AnswerCard from "../cards/AnswerCard";
+import CommonFilter from "../filter/CommonFilter";
+import { AnswerFilters } from "@/constants/filters";
 interface Props extends ActionResponse<Answer[]> {
 	totalAnswers: number;
 }
@@ -13,7 +15,10 @@ const AllAnswers = ({ data, success, error, totalAnswers }: Props) => {
 				<h3 className="primary-text-gradient">
 					{totalAnswers} {totalAnswers === 1 ? "Answer" : "Answers"}
 				</h3>
-				<p>Filters</p>
+				<CommonFilter
+					filters={AnswerFilters}
+					otherClasses="min-h-[56px] w-full sm:min-w-[170px]"
+				/>
 			</div>
 			<DataRenderer
 				data={data}

@@ -18,8 +18,9 @@ import { RefreshCcw } from "lucide-react";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion, toggleSaveQuestion } from "@/lib/actions/collection.action";
 
-const QuestionDetails = async ({ params }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 	const { id } = await params;
+	const { page, pageSize, filter } = await searchParams;
 	const { success, data: question } = await getQuestion({ questionId: id });
 	after(async () => {
 		await incrementViews({ questionId: id });
@@ -34,9 +35,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 		error: AnswersError,
 	} = await getAnswers({
 		questionId: id,
-		page: 1,
-		pageSize: 10,
-		filter: "latest",
+		page: Number(page) || 1,
+		pageSize: Number(pageSize) || 10,
+		filter,
 	});
 
 	const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
