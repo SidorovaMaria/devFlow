@@ -56,3 +56,12 @@ export const EMPTY_USERS = {
 	title: "No Users Found",
 	message: "You're ALONE. The only one here. More uses are coming soon!",
 };
+
+export const EMPTY_HOT_QUESTIONS = {
+	title: "No Hot Questions Yet",
+	message: "Looks like the hot questions are still warming up. Check back later!",
+	button: {
+		text: "Explore More",
+		href: ROUTES.HOME,
+	},
+};
