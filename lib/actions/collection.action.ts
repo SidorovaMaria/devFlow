@@ -157,7 +157,15 @@ export async function getSavedQuestions(
 		}
 
 		const [totalCount] = await Collection.aggregate([...pipeline, { $count: "count" }]);
-
+		if (!totalCount) {
+			return {
+				success: true,
+				data: {
+					collection: [],
+					isNext: false,
+				},
+			};
+		}
 		pipeline.push({ $sort: sortCriteria }, { $skip: skip }, { $limit: limit });
 		pipeline.push({ $project: { question: 1, author: 1 } });
 

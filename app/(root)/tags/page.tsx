@@ -18,7 +18,7 @@ const Tags = async ({ searchParams }: RouteParams) => {
 		filter: filter,
 	});
 	const { tags, isNext } = data || {};
-	console.log("Tags:", JSON.stringify(tags, null, 2));
+
 	return (
 		<>
 			<h1 className="h1-bold text-dark100_light900 text-3xl">Tags</h1>

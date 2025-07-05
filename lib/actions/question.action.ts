@@ -30,6 +30,7 @@ import { after } from "next/server";
 import { createInteraction } from "./interactions.action";
 import { Filter } from "lucide-react";
 import { auth } from "@/auth";
+import { cache } from "react";
 
 export async function createQuestion(
 	params: CreateQuestionParams
@@ -209,7 +210,9 @@ export async function editQuestion(params: EditQustionParams): Promise<ActionRes
 	}
 }
 
-export async function getQuestion(params: getQuestionParams): Promise<ActionResponse<Question>> {
+export const getQuestion = cache(async function getQuestion(
+	params: getQuestionParams
+): Promise<ActionResponse<Question>> {
 	const validationResult = await action({
 		params,
 		schema: getQuestionSchema,
@@ -235,7 +238,7 @@ export async function getQuestion(params: getQuestionParams): Promise<ActionResp
 	} catch (error) {
 		return handleError(error) as ErrorResponse;
 	}
-}
+});
 export async function getRecommendedQuestions(params: RecommendationParams) {
 	const { userId, query, skip = 0, limit = 10 } = params;
 	//Get users interactions
@@ -393,7 +396,9 @@ export async function incrementViews(
 	}
 }
 
-export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
+export const getHotQuestions = cache(async function getHotQuestions(): Promise<
+	ActionResponse<Question[]>
+> {
 	try {
 		await dbConnect();
 		const questions = await Question.find().sort({ views: -1, upvotes: -1 }).limit(5);
@@ -404,7 +409,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
 	} catch (error) {
 		return handleError(error) as ErrorResponse;
 	}
-}
+});
 
 export async function deleteQuestion(params: DeleteQuestionParams): Promise<ActionResponse> {
 	const validationResult = await action({

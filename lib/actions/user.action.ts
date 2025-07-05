@@ -22,6 +22,7 @@ import {
 	getUserTagsParams,
 } from "@/types/action";
 import { assignBadges } from "../utils";
+import { cache } from "react";
 
 export async function getUsers(
 	params: PaginatedSearchParams
@@ -210,16 +211,14 @@ export const getUserTags = async (
 	}
 };
 
-export const getUserStats = async (
-	params: getUserStatsParams
-): Promise<
+export const getUserStats = cache(async function getUserStats(params: getUserStatsParams): Promise<
 	ActionResponse<{
 		totalQuestions: number;
 		totalAnswers: number;
 		Reputation: number;
 		badges: Badges;
 	}>
-> => {
+> {
 	const validationResult = await action({
 		params,
 		schema: getUserStatsSchema,
@@ -278,6 +277,7 @@ export const getUserStats = async (
 				{ type: "REPUTATION", count: reputation },
 			],
 		});
+
 		return {
 			success: true,
 			data: {
@@ -290,4 +290,4 @@ export const getUserStats = async (
 	} catch (error) {
 		return handleError(error as Error) as ErrorResponse;
 	}
-};
+});

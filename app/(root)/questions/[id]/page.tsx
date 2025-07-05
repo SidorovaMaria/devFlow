@@ -19,7 +19,19 @@ import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion, toggleSaveQuestion } from "@/lib/actions/collection.action";
 import { auth } from "@/auth";
 import { createInteraction } from "@/lib/actions/interactions.action";
+import { Metadata } from "next";
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+	const { id } = await params;
 
+	const { success, data: question } = await getQuestion({ questionId: id });
+
+	if (!success || !question) return {};
+
+	return {
+		title: question.title,
+		description: question.content.slice(0, 100),
+	};
+}
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 	const loggedInUser = await auth();
 	const userId = loggedInUser?.user?.id;
@@ -56,7 +68,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 			authorId: author._id,
 		});
 		if (interaction.error) {
-			console.error("Failed to record view interaction:", interaction.error);
+			throw new Error("Failed to record view interaction");
 		}
 	}
 	return (

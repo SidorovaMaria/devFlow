@@ -7,6 +7,7 @@ import { NotFoundError } from "../http-errors";
 import Question from "@/database/question.model";
 import dbConnect from "../mongoose";
 import { getTagQuestionsParams } from "@/types/action";
+import { cache } from "react";
 
 export const getTags = async (
 	params: PaginatedSearchParams
@@ -102,7 +103,9 @@ export const getTagQuestion = async (
 	}
 };
 
-export async function getPopularTags(): Promise<ActionResponse<Tag[]>> {
+export const getPopularTags = cache(async function getPopularTags(): Promise<
+	ActionResponse<Tag[]>
+> {
 	try {
 		await dbConnect();
 		const topTags = await Tag.find({}).sort({ questions: -1 }).limit(5);
@@ -113,4 +116,4 @@ export async function getPopularTags(): Promise<ActionResponse<Tag[]>> {
 	} catch (error) {
 		return handleError(error) as ErrorResponse;
 	}
-}
+});
