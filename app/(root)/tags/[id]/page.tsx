@@ -4,6 +4,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getTagQuestion } from "@/lib/actions/tag.action";
+import { NotFoundError } from "@/lib/http-errors";
 import React from "react";
 
 const TagPage = async ({ params, searchParams }: RouteParams) => {
@@ -15,6 +16,9 @@ const TagPage = async ({ params, searchParams }: RouteParams) => {
 		pageSize: Number(pageSize) || 10,
 		query: query || "",
 	});
+	if (!success || !id) {
+		throw new NotFoundError("Tag");
+	}
 	const { tag, questions } = data || {};
 	return (
 		<>

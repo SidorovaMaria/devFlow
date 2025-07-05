@@ -21,12 +21,19 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/navigation/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
 import TagCard from "@/components/cards/TagCard";
+import { NotFoundError } from "@/lib/http-errors";
 const Profile = async ({ params, searchParams }: RouteParams) => {
 	const { id } = await params;
+	if (!id) throw new Error("User ID is required");
 	const { page, pageSize } = await searchParams;
 	const { success, data, error } = await getUser({
 		userId: id,
 	});
+	if (!data?.user) {
+		throw new NotFoundError("User");
+	}
+
+	const loggedInUser = await auth();
 
 	const {
 		success: userQuestionsSuccess,
@@ -53,9 +60,6 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 	} = await getUserTags({
 		userId: id,
 	});
-
-	if (!id) notFound();
-	const loggedInUser = await auth();
 
 	if (!success || !userQuestionsSuccess || !userAnswersSuccess || !userTagsSuccess) {
 		return <div className="h1-bold text-dark100_light900">{error?.message}</div>;

@@ -31,7 +31,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 	});
 
 	if (!success || !question) {
-		return redirect("/404");
+		throw new Error("Question not found");
 	}
 	const {
 		success: areAnswersLoaded,
