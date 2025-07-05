@@ -13,6 +13,12 @@ import {
 import { Answer, User } from "@/database";
 import { NotFoundError } from "../http-errors";
 import Question from "@/database/question.model";
+import {
+	GetUserAnswersParams,
+	getUserParams,
+	GetUserQuestionsParams,
+	getUserTagsParams,
+} from "@/types/action";
 
 export async function getUsers(
 	params: PaginatedSearchParams
@@ -159,7 +165,7 @@ export const getUserAnswers = async (
 	}
 };
 export const getUserTags = async (
-	params: getUserTags
+	params: getUserTagsParams
 ): Promise<ActionResponse<{ tags: { _id: string; name: string; count: number }[] }>> => {
 	const validationResult = await action({
 		params,

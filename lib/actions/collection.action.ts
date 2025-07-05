@@ -9,6 +9,7 @@ import { Collection } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import mongoose, { PipelineStage } from "mongoose";
+import { CollectionBaseParams } from "@/types/action";
 
 export async function toggleSaveQuestion(
 	params: CollectionBaseParams

@@ -9,6 +9,12 @@ import { Answer, Vote } from "@/database";
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import {
+	UpdateVoteCountParams,
+	createVoteParams,
+	hasVotedParams,
+	HasVotedResponse,
+} from "@/types/action";
 
 export async function updateVoteCount(
 	params: UpdateVoteCountParams,

@@ -10,6 +10,7 @@ import { NotFoundError, UnauthorizedError } from "../http-errors";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import { Vote } from "@/database";
+import { createAnswerParams, DeleteAnswerParams, getAnswersParams } from "@/types/action";
 export async function createAnswer(
 	params: createAnswerParams
 ): Promise<ActionResponse<IAnswerDoc>> {
@@ -118,7 +119,7 @@ export async function getAnswers(params: getAnswersParams): Promise<
 	}
 }
 
-export async function deleteAnswer(params: deleteAnswerParams): Promise<ActionResponse> {
+export async function deleteAnswer(params: DeleteAnswerParams): Promise<ActionResponse> {
 	const validatedResult = await action({
 		params,
 		schema: DeleteAnswerSchema,

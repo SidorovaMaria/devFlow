@@ -6,6 +6,7 @@ import { Tag } from "@/database";
 import { NotFoundError } from "../http-errors";
 import Question from "@/database/question.model";
 import dbConnect from "../mongoose";
+import { getTagQuestionsParams } from "@/types/action";
 
 export const getTags = async (
 	params: PaginatedSearchParams

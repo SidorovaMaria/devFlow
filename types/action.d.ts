@@ -1,3 +1,6 @@
+import { IInteractionDoc } from "@/database/interaction.model";
+import mongoose from "mongoose";
+
 interface SignInWithOAuthParams {
 	user: {
 		email: string;
@@ -68,12 +71,51 @@ interface GetUserQuestionsParams extends Omit<PaginatedSearchParams, "query" | "
 interface GetUserAnswersParams extends PaginatedSearchParams {
 	userId: string;
 }
-interface getUserTags {
+interface getUserTagsParams {
 	userId: string;
 }
-interface deleteQuestion {
+interface DeleteQuestionParams {
 	questionId: string;
 }
-interface deleteAnswerParams {
+interface DeleteAnswerParams {
 	answerId: string;
+}
+
+interface CreateInteractionParams {
+	action: "view" | "upvote" | "downvote" | "bookmark" | "post" | "edit" | "delete" | "search";
+	actionId: string;
+	authorId: string;
+	actionTarget: "question" | "answer";
+}
+
+interface UpdateReputationParams {
+	interaction: IInteractionDoc;
+	session: mongoose.ClientSession;
+	performerId: string;
+	authorId: string;
+}
+
+interface RecommendationParams {
+	userId: string;
+	query?: string;
+	skip: number;
+	limit: number;
+}
+
+interface JobFilterParams {
+	query: string;
+	page: string;
+}
+
+interface UpdateUserParams {
+	name?: string;
+	username?: string;
+	email?: string;
+	image?: string;
+	password?: string;
+}
+
+interface GlobalSearchParams {
+	query: string;
+	type: string | null;
 }

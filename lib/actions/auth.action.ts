@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import Account from "@/database/account.model";
 import { signIn } from "@/auth";
 import { NotFoundError } from "../http-errors";
+import { AuthCredentials } from "@/types/action";
 
 export async function signUpWithCredentials(params: AuthCredentials): Promise<ActionResponse> {
 	const validationResult = await action({ params, schema: SignUpSchema });

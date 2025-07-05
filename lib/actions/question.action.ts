@@ -18,6 +18,13 @@ import { NotFoundError, UnauthorizedError } from "../http-errors";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import dbConnect from "../mongoose";
+import {
+	CreateQuestionParams,
+	DeleteQuestionParams,
+	EditQustionParams,
+	getQuestionParams,
+	incrementViewsParams,
+} from "@/types/action";
 
 export async function createQuestion(
 	params: CreateQuestionParams
@@ -318,7 +325,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
 	}
 }
 
-export async function deleteQuestion(params: deleteQuestion): Promise<ActionResponse> {
+export async function deleteQuestion(params: DeleteQuestionParams): Promise<ActionResponse> {
 	const validationResult = await action({
 		params,
 		schema: DeleteQuestionSchema,
