@@ -55,6 +55,7 @@ interface Answer {
 	createdAt: Date;
 	upvotes: number;
 	downvotes: number;
+	quesiton: string;
 }
 //Data that othrers can see
 interface User {

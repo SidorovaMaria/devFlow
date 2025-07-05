@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import ProfileLink from "@/components/user/ProfileLink";
 import UserAvatar from "@/components/UserAvatar";
-import { getUser, getUserQuestions } from "@/lib/actions/user.action";
+import { getUser, getUserAnswers, getUserQuestions } from "@/lib/actions/user.action";
 import { notFound, redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
@@ -10,9 +10,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Stats from "@/components/user/Stats";
 import DataRenderer from "@/components/DataRenderer";
-import { EMPTY_QUESTION } from "@/constants/states";
+import { EMPTY_ANSWERS, EMPTY_QUESTION } from "@/constants/states";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/navigation/Pagination";
+import AnswerCard from "@/components/cards/AnswerCard";
 const Profile = async ({ params, searchParams }: RouteParams) => {
 	const { id } = await params;
 	const { page, pageSize } = await searchParams;
@@ -28,17 +29,27 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 		page: Number(page) || 1,
 		pageSize: Number(pageSize) || 3,
 	});
+	const {
+		success: userAnswersSuccess,
+		data: userAnswersData,
+		error: userAnswersError,
+	} = await getUserAnswers({
+		userId: id,
+		page: Number(page) || 1,
+		pageSize: Number(pageSize) || 3,
+	});
 
 	if (!id) notFound();
 	const loggedInUser = await auth();
 
-	if (!success || !userQuestionsSuccess) {
+	if (!success || !userQuestionsSuccess || !userAnswersSuccess) {
 		return <div className="h1-bold text-dark100_light900">{error?.message}</div>;
 	}
 
 	const { user, totalQuestions, totalAnswers } = data!;
 	const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 	const { questions: topQuestions, isNext: hasMoreQuestions } = userQuestionsData!;
+	const { answers: userAnswers, isNext: hasMoreAnswers } = userAnswersData!;
 	return (
 		<>
 			<section className="flex flex-col-reverse items-start justify-between sm:flex-row">
@@ -120,7 +131,26 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 						<Pagination page={page} isNext={hasMoreQuestions} />
 					</TabsContent>
 					<TabsContent value="answers" className="flex w-full flex-col gap-6">
-						List of Answers
+						<DataRenderer
+							data={userAnswers}
+							success={userAnswersSuccess}
+							error={userAnswersError}
+							empty={EMPTY_ANSWERS}
+							render={(topAnswers) => (
+								<div className="flex w-full flex-col gap-6">
+									{topAnswers.map((answer) => (
+										<AnswerCard
+											key={answer._id}
+											{...answer}
+											crop
+											containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
+											showReadMore
+										/>
+									))}
+								</div>
+							)}
+						/>{" "}
+						<Pagination page={page} isNext={hasMoreAnswers} />
 					</TabsContent>
 				</Tabs>
 				<div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
