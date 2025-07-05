@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteQuestion } from "@/lib/actions/question.action";
+import { deleteAnswer } from "@/lib/actions/answer.action";
 interface Props {
 	type: "Question" | "Answer";
 	itemId: string;
@@ -39,6 +40,12 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 			});
 		} else if (type === "Answer") {
 			// Call API to delete answer
+			const { success, error } = await deleteAnswer({ answerId: itemId });
+			if (!success) {
+				toast.error("Failed to delete answer");
+				console.error("Error deleting answer:", error);
+				return;
+			}
 			toast.warning("Answer deleted", {
 				description: "Your answer has been deleted successfully.",
 			});

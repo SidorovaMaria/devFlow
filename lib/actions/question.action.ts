@@ -5,6 +5,7 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
 	askQuestionSchema,
+	DeleteQuestionSchema,
 	editQuestionSchema,
 	getQuestionSchema,
 	IncrementViewsSchema,
@@ -320,7 +321,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
 export async function deleteQuestion(params: deleteQuestion): Promise<ActionResponse> {
 	const validationResult = await action({
 		params,
-		schema: getQuestionSchema,
+		schema: DeleteQuestionSchema,
 		authorize: true,
 	});
 	if (validationResult instanceof Error) {
