@@ -7,11 +7,13 @@ import Preview from "../editor/Preview";
 import Votes from "../votes/Votes";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { RefreshCcw } from "lucide-react";
+import EditDeleteAction from "../user/EditDeleteAction";
 interface Props extends Answer {
 	containerClasses?: string;
 	showReadMore?: boolean;
 	crop?: boolean;
 	question?: string;
+	showActionBtns?: boolean;
 }
 const AnswerCard = ({
 	_id,
@@ -24,6 +26,7 @@ const AnswerCard = ({
 	crop,
 	containerClasses,
 	showReadMore = false,
+	showActionBtns = false,
 }: Props) => {
 	const hasVotedPromise = hasVoted({
 		targetId: _id,
@@ -34,8 +37,13 @@ const AnswerCard = ({
 	}
 
 	return (
-		<article className={cn("light-border border-b py-10", containerClasses)}>
+		<article className={cn("light-border border-b py-10 relative", containerClasses)}>
 			<span id={`answer-${_id}`} className="hash-span" />
+			{showActionBtns && (
+				<div className="background-light800 flex-center absolute -right-2 -top-5 size-9 rounded-full">
+					<EditDeleteAction type="Answer" itemId={_id} />
+				</div>
+			)}
 			<div className="mb-5 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
 				<div className="flex flex-1 items-start gap-1 sm:items-center">
 					<UserAvatar
