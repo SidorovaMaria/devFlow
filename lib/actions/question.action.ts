@@ -11,9 +11,9 @@ import {
 	PaginationedSerachParamsSchema,
 } from "../validations";
 import mongoose, { FilterQuery } from "mongoose";
-import { Tag, TagQuestion } from "@/database";
+import { Answer, Collection, Tag, TagQuestion, Vote } from "@/database";
 import { ITagDoc } from "@/database/tag.model";
-import { NotFoundError } from "../http-errors";
+import { NotFoundError, UnauthorizedError } from "../http-errors";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import dbConnect from "../mongoose";
@@ -314,5 +314,71 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
 		};
 	} catch (error) {
 		return handleError(error) as ErrorResponse;
+	}
+}
+
+export async function deleteQuestion(params: deleteQuestion): Promise<ActionResponse> {
+	const validationResult = await action({
+		params,
+		schema: getQuestionSchema,
+		authorize: true,
+	});
+	if (validationResult instanceof Error) {
+		return handleError(validationResult) as ErrorResponse;
+	}
+	const { questionId } = validationResult.params!;
+	const { user } = validationResult.session!;
+	const session = await mongoose.startSession();
+	session.startTransaction();
+	try {
+		const question = await Question.findById(questionId).session(session);
+		if (!question) {
+			throw new NotFoundError("Question");
+		}
+		if (question.author.toString() !== user?.id) {
+			throw new UnauthorizedError("Unauthorized");
+		}
+		// Delete reference from Collection
+		await Collection.deleteMany({ question: questionId }, { session });
+		//Delete related docuemnts in TagQuestion
+		await TagQuestion.deleteMany({ question: questionId }, { session });
+		//Keep the tag but decreemnt their question counn
+		if (question.tags.length > 0) {
+			await Tag.updateMany(
+				{ _id: { $in: question.tags } },
+				{ $inc: { questions: -1 } },
+				{ session }
+			);
+		}
+		//Delete all upvotes and downvotes related to the questin
+		if (question.upvotes > 0 || question.downvotes > 0) {
+			await Vote.deleteMany({ actionId: questionId, actionType: "question" }, { session });
+		}
+
+		// Remove all anwers
+		const answers = await Answer.find({ question: questionId }).session(session);
+		if (answers.length > 0) {
+			await Vote.deleteMany(
+				{
+					actionId: { $in: answers.map((answer) => answer._id) },
+					actionType: "answer",
+				},
+				{ session }
+			);
+		}
+
+		//Delete question
+		await Question.findByIdAndDelete(questionId).session(session);
+
+		await session.commitTransaction();
+		user?.id && revalidatePath(ROUTES.PROFILE(user?.id));
+		return {
+			success: true,
+		};
+	} catch (error) {
+		await session.abortTransaction();
+		return handleError(error) as ErrorResponse;
+	} finally {
+		await session.endSession();
 	}
 }

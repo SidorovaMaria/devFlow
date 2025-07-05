@@ -14,6 +14,7 @@ import {
 } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { deleteQuestion } from "@/lib/actions/question.action";
 interface Props {
 	type: "Question" | "Answer";
 	itemId: string;
@@ -26,7 +27,12 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 	};
 	const handleDelete = async () => {
 		if (type === "Question") {
-			// Call API to delete question
+			const { success, error } = await deleteQuestion({ questionId: itemId });
+			if (!success) {
+				toast.error("Failed to delete question");
+				console.error("Error deleting question:", error);
+				return;
+			}
 
 			toast.warning("Question Deleted!", {
 				description: "Your question has been deleted successfully.",
