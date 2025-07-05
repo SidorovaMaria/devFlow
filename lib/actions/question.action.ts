@@ -25,6 +25,8 @@ import {
 	getQuestionParams,
 	incrementViewsParams,
 } from "@/types/action";
+import { after } from "next/server";
+import { createInteraction } from "./interactions.action";
 
 export async function createQuestion(
 	params: CreateQuestionParams
@@ -75,10 +77,25 @@ export async function createQuestion(
 			{ $push: { tags: { $each: tagIds } } },
 			{ session }
 		);
-
+		// Create an interaction
+		after(async () => {
+			const { success } = await createInteraction({
+				action: "post",
+				actionTarget: "question",
+				actionId: question._id.toString(),
+				authorId: userId as string,
+			});
+			if (!success) {
+				throw new Error("Failed to create interaction");
+			}
+		});
 		await session.commitTransaction();
 
-		return { success: true, data: JSON.parse(JSON.stringify(question)) };
+		return {
+			success: true,
+			data: JSON.parse(JSON.stringify(question)),
+			// message: "Question created successfully",
+		};
 	} catch (error) {
 		await session.abortTransaction();
 		return handleError(error) as ErrorResponse;
@@ -366,6 +383,7 @@ export async function deleteQuestion(params: DeleteQuestionParams): Promise<Acti
 		// Remove all anwers
 		const answers = await Answer.find({ question: questionId }).session(session);
 		if (answers.length > 0) {
+			await Answer.deleteMany({ question: questionId }).session(session);
 			await Vote.deleteMany(
 				{
 					actionId: { $in: answers.map((answer) => answer._id) },
@@ -377,6 +395,17 @@ export async function deleteQuestion(params: DeleteQuestionParams): Promise<Acti
 
 		//Delete question
 		await Question.findByIdAndDelete(questionId).session(session);
+		after(async () => {
+			const { success } = await createInteraction({
+				action: "delete",
+				actionTarget: "question",
+				actionId: questionId,
+				authorId: user?.id as string,
+			});
+			if (!success) {
+				throw new Error("Failed to uppdate reputaiton");
+			}
+		});
 
 		await session.commitTransaction();
 		user?.id && revalidatePath(ROUTES.PROFILE(user?.id));

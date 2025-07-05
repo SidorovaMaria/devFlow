@@ -23,7 +23,7 @@ if (!cached) {
 //Establish real connection
 const dbConnect = async (): Promise<Mongoose> => {
 	if (cached.conn) {
-		logger.info("Using existing MongoDB connection");
+		// logger.info("Using existing MongoDB connection");
 		return cached.conn;
 	}
 	if (!cached.promise) {

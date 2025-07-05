@@ -47,7 +47,9 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
 			});
 			if (result.success) {
 				form.reset();
-				toast.success("Answer posted successfully!");
+				toast.success("Answer posted successfully!", {
+					description: "You have been awarded 10 reputation points.",
+				});
 				if (editorRef.current) {
 					editorRef.current.setMarkdown("");
 				}

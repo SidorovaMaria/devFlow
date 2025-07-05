@@ -29,6 +29,7 @@ type ActionResponse<T = null> = {
 		message: string;
 		details?: Record<string, string[]>;
 	};
+
 	status?: number;
 };
 type SuccessResponse<T = null> = ActionResponse<T> & { success: true };

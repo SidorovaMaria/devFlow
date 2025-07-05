@@ -12,23 +12,37 @@ export async function createInteraction(
 	const validationResult = await action({
 		params,
 		schema: CreateInteractionSchema,
+		authorize: true,
 	});
+
 	if (validationResult instanceof Error) {
+		console.error("Error in createInteraction:", validationResult);
 		return handleError(validationResult) as ErrorResponse;
 	}
 	const { action: actionType, actionTarget, actionId, authorId } = validationResult.params!;
-	const { user } = validationResult.session!;
+
+	const userId = validationResult.session?.user?.id;
 	const session = await mongoose.startSession();
 	session.startTransaction();
 	try {
 		const [interaction] = await Interaction.create(
-			[{ user: user?.id, action: actionType, actionId, actionType }],
+			[
+				{
+					user: userId,
+					action: actionType,
+					actionId,
+					actionType: actionTarget,
+				},
+			],
 			{ session }
 		);
+		if (!interaction) {
+			throw new Error("Failed to create interaction");
+		}
 		await updateReputation({
 			interaction,
 			session,
-			performerId: user?.id!,
+			performerId: userId!,
 			authorId,
 		});
 		await session.commitTransaction();
@@ -54,7 +68,7 @@ export async function updateReputation(params: UpdateReputationParams) {
 			PerformerPoints = 2;
 			AuthorPoints = 10;
 			if (performerId === authorId) {
-				AuthorPoints = 0; // No points for self upvote
+				PerformerPoints = 0; // No points for self upvote
 			}
 			break;
 		case "downvote":

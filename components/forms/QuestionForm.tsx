@@ -105,7 +105,9 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 			}
 			const result = await createQuestion(data);
 			if (result.success) {
-				toast.success("Question created successfully!");
+				toast.success("Question created successfully!", {
+					description: "You have been awarded 5 reputation points.",
+				});
 				if (result.data) router.push(ROUTES.QUESTIONS(result.data._id));
 			} else {
 				toast.error(`Error: ${result.status}`, {

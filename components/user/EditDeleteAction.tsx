@@ -36,7 +36,8 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 			}
 
 			toast.warning("Question Deleted!", {
-				description: "Your question has been deleted successfully.",
+				description:
+					"Your question has been deleted successfully. We will remove 5 reputation points",
 			});
 		} else if (type === "Answer") {
 			// Call API to delete answer
@@ -47,7 +48,8 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 				return;
 			}
 			toast.warning("Answer deleted", {
-				description: "Your answer has been deleted successfully.",
+				description:
+					"Your answer has been deleted successfully. We will remove 10 reputation points",
 			});
 		}
 	};

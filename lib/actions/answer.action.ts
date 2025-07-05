@@ -11,6 +11,8 @@ import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import { Vote } from "@/database";
 import { createAnswerParams, DeleteAnswerParams, getAnswersParams } from "@/types/action";
+import { after } from "next/server";
+import { createInteraction } from "./interactions.action";
 export async function createAnswer(
 	params: createAnswerParams
 ): Promise<ActionResponse<IAnswerDoc>> {
@@ -49,6 +51,17 @@ export async function createAnswer(
 		question.answers += 1;
 		await question.save({ session });
 		await session.commitTransaction();
+		after(async () => {
+			const { success } = await createInteraction({
+				action: "post",
+				actionTarget: "answer",
+				actionId: newAnswer._id.toString(),
+				authorId: userId as string,
+			});
+			if (!success) {
+				console.error("Failed to create interaction for answer post");
+			}
+		});
 		revalidatePath(ROUTES.QUESTIONS(questionId));
 		return {
 			success: true,
@@ -157,6 +170,17 @@ export async function deleteAnswer(params: DeleteAnswerParams): Promise<ActionRe
 			}).session(session);
 		}
 		await Answer.findByIdAndDelete(answerId, { session });
+		after(async () => {
+			const { success } = await createInteraction({
+				action: "delete",
+				actionTarget: "answer",
+				actionId: answerId,
+				authorId: user?.id as string,
+			});
+			if (!success) {
+				console.error("Failed to create interaction for answer deletion");
+			}
+		});
 		await session.commitTransaction();
 		user?.id && revalidatePath(ROUTES.PROFILE(user?.id));
 		return {

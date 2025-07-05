@@ -23,7 +23,6 @@ interface Props {
 
 const CommonFilter = ({ filters, otherClasses = "", containerClasses = "" }: Props) => {
 	const router = useRouter();
-	console.log(filters);
 	const searchParams = useSearchParams();
 	const paramsFilter = searchParams.get("filter") || "";
 	const handleUpdateFilter = (filter: string) => {
