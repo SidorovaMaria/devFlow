@@ -1,6 +1,7 @@
 "use client";
 import { createVote } from "@/lib/actions/vote.action";
 import { formatNumber } from "@/lib/utils";
+import { HasVotedResponse } from "@/types/action";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { use, useState } from "react";

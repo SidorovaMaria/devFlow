@@ -4,28 +4,7 @@ import { Button } from "../ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formURLQuery, removeKeyFromURLQuery } from "@/lib/url";
-
-const filters = [
-	// { name: "React", value: "react" },
-	// { name: "JavaScript", value: "javascript" },
-	{
-		name: "Newest",
-		value: "newest",
-	},
-	{
-		name: "Popular",
-		value: "popular",
-	},
-	{ name: "Answered", value: "answered" },
-	{
-		name: "Unanswered",
-		value: "unanswered",
-	},
-	{
-		name: "Recommended",
-		value: "recommended",
-	},
-];
+import { HomePageFilters } from "@/constants/filters";
 
 const HomeFilter = () => {
 	const router = useRouter();
@@ -52,7 +31,7 @@ const HomeFilter = () => {
 	};
 	return (
 		<div className="mt-10 flex flex-wrap gap-3 sm:flex">
-			{filters.map((filter) => (
+			{HomePageFilters.map((filter) => (
 				<Button
 					className={cn(
 						`body-medium cursor-pointer rounded-lg px-6 py-3 capitalize shadow-none`,

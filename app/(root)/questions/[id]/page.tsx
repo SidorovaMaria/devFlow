@@ -17,8 +17,12 @@ import { hasVoted } from "@/lib/actions/vote.action";
 import { RefreshCcw } from "lucide-react";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion, toggleSaveQuestion } from "@/lib/actions/collection.action";
+import { auth } from "@/auth";
+import { createInteraction } from "@/lib/actions/interactions.action";
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
+	const loggedInUser = await auth();
+	const userId = loggedInUser?.user?.id;
 	const { id } = await params;
 	const { page, pageSize, filter } = await searchParams;
 	const { success, data: question } = await getQuestion({ questionId: id });
@@ -42,8 +46,19 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
 	const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
 	const hasSavedQuestionPromise = hasSavedQuestion({ questionId: question._id });
-
 	const { author, createdAt, answers, views, title, tags, content } = question;
+	// Record View Interaction
+	if (userId !== author._id) {
+		const interaction = await createInteraction({
+			action: "view",
+			actionId: question._id,
+			actionTarget: "question",
+			authorId: author._id,
+		});
+		if (interaction.error) {
+			console.error("Failed to record view interaction:", interaction.error);
+		}
+	}
 	return (
 		<>
 			<div className="flex-start w-full flex-col">

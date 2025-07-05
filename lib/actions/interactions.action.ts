@@ -39,6 +39,7 @@ export async function createInteraction(
 		if (!interaction) {
 			throw new Error("Failed to create interaction");
 		}
+
 		await updateReputation({
 			interaction,
 			session,
@@ -95,6 +96,7 @@ export async function updateReputation(params: UpdateReputationParams) {
 		);
 		return;
 	}
+
 	await User.bulkWrite(
 		[
 			{
