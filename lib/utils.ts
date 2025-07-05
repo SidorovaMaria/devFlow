@@ -1,3 +1,4 @@
+import { BADGE_CRITERIA } from "@/constants";
 import { techMap } from "@/constants/techMaps";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -75,4 +76,27 @@ export const formatNumber = (num: number) => {
 export function sanitizeMarkdown(markdown: string): string {
 	// Remove problematic JSON-like code metadata
 	return markdown.replace(/^\s*\{.*"type":"code".*"name":"N\/A".*\}\s*$/gm, "").trim();
+}
+
+export function assignBadges(params: {
+	criteria: {
+		type: keyof typeof BADGE_CRITERIA;
+		count: number;
+	}[];
+}) {
+	const badgeCount = {
+		GOLD: 0,
+		SILVER: 0,
+		BRONZE: 0,
+	};
+	const { criteria } = params;
+	criteria.forEach(({ type, count }) => {
+		const badgeLevel = BADGE_CRITERIA[type];
+		Object.keys(badgeLevel).forEach((level) => {
+			if (count >= badgeLevel[level as keyof typeof badgeLevel]) {
+				badgeCount[level as keyof typeof badgeCount]++;
+			}
+		});
+	});
+	return badgeCount;
 }

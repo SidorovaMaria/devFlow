@@ -207,3 +207,6 @@ export const CreateInteractionSchema = z.object({
 	actionId: z.string().min(1, { message: "Action ID is required." }),
 	authorId: z.string().min(1, { message: "Author ID is required." }),
 });
+export const getUserStatsSchema = z.object({
+	userId: z.string().min(1, { message: "User ID is required." }),
+});

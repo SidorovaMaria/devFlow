@@ -78,8 +78,21 @@ interface Collection {
 	author: Author | string;
 }
 
-interface BadgeCounts {
+interface Badges {
 	GOLD: number;
 	SILVER: number;
 	BRONZE: number;
 }
+
+/*
+Badge Information
+Metric  | Bronze | Silver | Gold
+--------|------|--------|-------
+Questions | 10   | 50     | 100
+Answers   | 10   | 50    | 100
+Upvotes Q   | 100  | 500    | 1000
+Upvotes A   | 100  | 500    | 1000
+Views      | 1000 | 5000   | 10000
+Reputation | 1000 | 5000   | 10000
+Logged In Time | 6 months | 12 months | 24 months
+*/

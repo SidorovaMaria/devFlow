@@ -1,7 +1,13 @@
 import { auth } from "@/auth";
 import ProfileLink from "@/components/user/ProfileLink";
 import UserAvatar from "@/components/UserAvatar";
-import { getUser, getUserAnswers, getUserQuestions, getUserTags } from "@/lib/actions/user.action";
+import {
+	getUser,
+	getUserAnswers,
+	getUserQuestions,
+	getUserStats,
+	getUserTags,
+} from "@/lib/actions/user.action";
 import { notFound, redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
@@ -21,6 +27,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 	const { success, data, error } = await getUser({
 		userId: id,
 	});
+
 	const {
 		success: userQuestionsSuccess,
 		data: userQuestionsData,
@@ -54,11 +61,12 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 		return <div className="h1-bold text-dark100_light900">{error?.message}</div>;
 	}
 
-	const { user, totalQuestions, totalAnswers } = data!;
+	const { user } = data!;
 	const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 	const { questions: topQuestions, isNext: hasMoreQuestions } = userQuestionsData!;
 	const { answers: userAnswers, isNext: hasMoreAnswers } = userAnswersData!;
 	const { tags: userTags } = userTagsData!;
+	const { success: userDataStats, data: userStats } = await getUserStats({ userId: id });
 
 	return (
 		<>
@@ -106,13 +114,15 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 				</div>
 			</section>
 			<Stats
-				totalQuestions={totalQuestions}
-				totalAnswers={totalAnswers}
-				badges={{
-					GOLD: 0,
-					SILVER: 0,
-					BRONZE: 0,
-				}}
+				totalQuestions={userStats?.totalQuestions || 0} //TODO
+				totalAnswers={userStats?.totalAnswers || 0} //TODO
+				badges={
+					userStats?.badges || {
+						GOLD: 0,
+						SILVER: 0,
+						BRONZE: 0,
+					}
+				}
 				reputationPoints={user.reputation || 0}
 			/>
 			<section className="mt-10 flex gap-10">

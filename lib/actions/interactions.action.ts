@@ -66,13 +66,13 @@ export async function updateReputation(params: UpdateReputationParams) {
 	switch (action) {
 		case "upvote":
 			PerformerPoints = 2;
-			AuthorPoints = 10;
+			AuthorPoints = 2;
 			if (performerId === authorId) {
 				PerformerPoints = 0; // No points for self upvote
 			}
 			break;
 		case "downvote":
-			PerformerPoints = -1;
+			PerformerPoints = -2;
 			AuthorPoints = -2;
 			if (performerId === authorId) {
 				AuthorPoints = 0; // No points for self downvote

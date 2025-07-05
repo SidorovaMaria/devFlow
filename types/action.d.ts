@@ -119,3 +119,7 @@ interface GlobalSearchParams {
 	query: string;
 	type: string | null;
 }
+
+interface getUserStatsParams {
+	userId: string;
+}
