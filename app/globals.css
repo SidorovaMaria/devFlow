@@ -374,7 +374,9 @@ body {
 .active-theme {
 	filter: invert(53%) sepia(98%) saturate(3332%) hue-rotate(0deg) brightness(104%) contrast(106%) !important;
 }
-
+.profile-input {
+	@apply paragraph-regular background-light800_dark300 border-primary-500/40 text-dark300_light700 no-focus min-h-[56px] border focus:border-primary-500/60! focus:border-2;
+}
 .hash-span {
 	margin-top: -140px;
 	padding-bottom: 140px;

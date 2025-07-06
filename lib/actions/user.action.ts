@@ -10,6 +10,7 @@ import {
 	getUserStatsSchema,
 	getUserTagsSchema,
 	PaginationedSerachParamsSchema,
+	UpdateUserSchema,
 } from "../validations";
 import { Answer, User } from "@/database";
 import { NotFoundError } from "../http-errors";
@@ -20,6 +21,7 @@ import {
 	GetUserQuestionsParams,
 	getUserStatsParams,
 	getUserTagsParams,
+	UpdateUserParams,
 } from "@/types/action";
 import { assignBadges } from "../utils";
 import { cache } from "react";
@@ -85,6 +87,7 @@ export async function getUser(params: getUserParams): Promise<ActionResponse<{ u
 		if (!user) {
 			throw new NotFoundError("User");
 		}
+		console.log(user);
 
 		return {
 			success: true,
@@ -291,3 +294,40 @@ export const getUserStats = cache(async function getUserStats(params: getUserSta
 		return handleError(error as Error) as ErrorResponse;
 	}
 });
+export const updateUser = async (
+	params: UpdateUserParams
+): Promise<ActionResponse<{ user: User }>> => {
+	const validationResult = await action({
+		params,
+		schema: UpdateUserSchema,
+		authorize: true,
+	});
+	if (validationResult instanceof Error) {
+		return handleError(validationResult) as ErrorResponse;
+	}
+	const user = validationResult.session?.user;
+	const { name, username, bio, location, portfolio } = validationResult.params!;
+	try {
+		const updatedUser = await User.findByIdAndUpdate(
+			user?.id,
+			{
+				name,
+				username,
+				bio,
+				location,
+				portfolio,
+			},
+			{ new: true }
+		);
+		if (!updatedUser) {
+			throw new NotFoundError("User");
+		}
+
+		return {
+			success: true,
+			data: { user: JSON.parse(JSON.stringify(updatedUser)) },
+		};
+	} catch (error) {
+		return handleError(error as Error) as ErrorResponse;
+	}
+};

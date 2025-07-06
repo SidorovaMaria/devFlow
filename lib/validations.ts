@@ -210,3 +210,39 @@ export const CreateInteractionSchema = z.object({
 export const getUserStatsSchema = z.object({
 	userId: z.string().min(1, { message: "User ID is required." }),
 });
+export const ProfileSchema = z.object({
+	name: z
+		.string()
+		.min(3, {
+			message: "Name must be at least 3 characters.",
+		})
+		.max(130, { message: "Name musn't be longer then 130 characters." }),
+	username: z.string().min(3, { message: "username musn't be longer then 100 characters." }),
+	portfolio: z
+		.string()
+		.transform((val) => (val === "" ? undefined : val))
+		.optional()
+		.refine((val) => !val || /^https?:\/\/.+\..+/.test(val), {
+			message: "Please provide a valid URL.",
+		}),
+	location: z.string().optional(),
+	bio: z.string().optional(),
+});
+export const UpdateUserSchema = z.object({
+	name: z
+		.string()
+		.min(3, {
+			message: "Name must be at least 3 characters.",
+		})
+		.max(130, { message: "Name musn't be longer then 130 characters." }),
+	username: z.string().min(3, { message: "username musn't be longer then 100 characters." }),
+	portfolio: z
+		.string()
+		.transform((val) => (val === "" ? undefined : val))
+		.optional()
+		.refine((val) => !val || /^https?:\/\/.+\..+/.test(val), {
+			message: "Please provide a valid URL.",
+		}),
+	location: z.string().optional(),
+	bio: z.string().optional(),
+});
