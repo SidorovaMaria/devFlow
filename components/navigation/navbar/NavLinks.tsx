@@ -1,5 +1,6 @@
 "use client";
 
+import { auth } from "@/auth";
 import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -10,7 +11,6 @@ import React from "react";
 
 const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean; userId?: string }) => {
 	const pathname = usePathname();
-
 	return (
 		<>
 			{sidebarLinks.map((item) => {

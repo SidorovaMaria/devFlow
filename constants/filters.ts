@@ -11,6 +11,11 @@ export const AnswerFilters = [
 	{ name: "Oldest", value: "oldest" },
 	{ name: "Popular", value: "popular" },
 ];
+export const Locations = [
+	{ name: "Australia", value: "australia" },
+	{ name: "United Kingdom", value: "UK" },
+	{ name: "USA", value: "usa" },
+];
 
 export const CollectionFilters = [
 	{ name: "Oldest", value: "oldest" },

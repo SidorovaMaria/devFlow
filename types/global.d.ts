@@ -96,3 +96,22 @@ Views      | 1000 | 5000   | 10000
 Reputation | 1000 | 5000   | 10000
 Logged In Time | 6 months | 12 months | 24 months
 */
+
+interface Job {
+	job_id: srting;
+	employer_name?: string;
+	employer_logo?: string | undefined;
+	employer_website?: string;
+	job_employment_type?: string;
+	job_title?: string;
+	job_description?: string;
+	job_apply_link?: string;
+	job_city?: string;
+	job_state?: string;
+	job_country?: string;
+}
+interface Country {
+	name: {
+		common: string;
+	};
+}
