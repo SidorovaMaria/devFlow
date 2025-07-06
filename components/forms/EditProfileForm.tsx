@@ -1,14 +1,6 @@
 "use client";
 import React, { startTransition } from "react";
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "../ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { ProfileSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -16,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { updateUser } from "@/lib/actions/user.action";
 import { toast } from "sonner";

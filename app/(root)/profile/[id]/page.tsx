@@ -8,7 +8,6 @@ import {
 	getUserStats,
 	getUserTags,
 } from "@/lib/actions/user.action";
-import { notFound, redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import dayjs from "dayjs";
@@ -34,32 +33,25 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 	}
 
 	const loggedInUser = await auth();
-
-	const {
-		success: userQuestionsSuccess,
-		data: userQuestionsData,
-		error: userQuestionsError,
-	} = await getUserQuestions({
-		userId: id,
-		page: Number(page) || 1,
-		pageSize: Number(pageSize) || 3,
-	});
-	const {
-		success: userAnswersSuccess,
-		data: userAnswersData,
-		error: userAnswersError,
-	} = await getUserAnswers({
-		userId: id,
-		page: Number(page) || 1,
-		pageSize: Number(pageSize) || 3,
-	});
-	const {
-		success: userTagsSuccess,
-		data: userTagsData,
-		error: userTagsError,
-	} = await getUserTags({
-		userId: id,
-	});
+	const [
+		{ success: userQuestionsSuccess, data: userQuestionsData, error: userQuestionsError },
+		{ success: userAnswersSuccess, data: userAnswersData, error: userAnswersError },
+		{ success: userTagsSuccess, data: userTagsData, error: userTagsError },
+	] = await Promise.all([
+		getUserQuestions({
+			userId: id,
+			page: Number(page) || 1,
+			pageSize: Number(pageSize) || 3,
+		}),
+		getUserAnswers({
+			userId: id,
+			page: Number(page) || 1,
+			pageSize: Number(pageSize) || 3,
+		}),
+		getUserTags({
+			userId: id,
+		}),
+	]);
 
 	if (!success || !userQuestionsSuccess || !userAnswersSuccess || !userTagsSuccess) {
 		return <div className="h1-bold text-dark100_light900">{error?.message}</div>;

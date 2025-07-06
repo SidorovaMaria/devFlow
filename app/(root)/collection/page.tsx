@@ -8,7 +8,6 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_COLLECTIONS } from "@/constants/states";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 import React from "react";
-import { toast } from "sonner";
 
 const Collections = async ({ searchParams }: RouteParams) => {
 	const { page, pageSize, query, filter } = await searchParams;

@@ -4,7 +4,7 @@ import React from "react";
 interface Props {
 	totalAnswers: number;
 	totalQuestions: number;
-	badges: BadgeCounts;
+	badges: Badges;
 	reputationPoints: number;
 }
 const Stats = ({ totalAnswers, totalQuestions, badges, reputationPoints }: Props) => {
